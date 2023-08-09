@@ -7,31 +7,56 @@ $strength = @(
     "Renegade Rows", 
     "Leg Press", 
     "Chest Fly"
-    "Lat Pulldown", 
-    "Goblet Squats", 
+    "Lat Pulldown", , 
     "Situps",
     "Dumbbell Ab Crunches", 
     "Leg Raises",
     "Skull Crushers",
     "Tricep Rows"
+    "Pushups"
 )
 
-$cardio = @(
+$bodyweight = @(
     "1km run",
     "Box Jumps",
     "1km Rowing",
-    "1km bike"
+    "1km bike",
+    "Sledge", 
+    "Pullups",
+    "Pushups", 
+    "Goblet Squats", 
+    "Situps",
+    "Dumbbell Ab Crunches",
+    "Leg Raises"    
 )
 
 # randomise 4-5 exercises + supersets
-$exercise = "strength", "cardio" | Sort-Object {Get-Random}
-if($exercise[0] -like "strength"){
-    $workout = $strength | Sort-Object{Get-Random}
-    $workout[0..7]
+$exercise = "strength", "bodyweight" | Sort-Object {Get-Random}
+$test = if($exercise[0] -like "strength"){
+    $strength | Sort-Object{Get-Random}
 } else {
-    $workout = $cardio
-    $workout
+    $bodyweight | Sort-Object {Get-Random}
 }
 
-
 # Send email with randomised exercises on it
+
+function Send-email {
+    $username = (Get-Content ".\creds.txt")[0]
+    $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
+
+    $email = @{
+        from = $username
+        to = $username
+        subject = "Workout"
+        body = "Today's Workout: $test"
+        smtpserver = "smtp.gmail.com"
+        port = 587
+        credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
+        usessl = $true
+        verbose = $true
+    }
+    
+    Send-MailMessage @email
+}
+
+Send-Email
