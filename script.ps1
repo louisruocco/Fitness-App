@@ -44,11 +44,17 @@ function Send-email {
     $username = (Get-Content ".\creds.txt")[0]
     $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
 
+    $body = @"
+    <h1>Todays Workout</h1>
+    <ul>
+        <li>$test</li>
+    </ul>
+"@
     $email = @{
         from = $username
         to = $username
         subject = "Workout"
-        body = "Today's Workout: $test"
+        body = $body
         smtpserver = "smtp.gmail.com"
         port = 587
         credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
