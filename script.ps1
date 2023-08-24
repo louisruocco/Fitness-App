@@ -32,37 +32,41 @@ $bodyweight = @(
 
 # randomise 4-5 exercises + supersets
 $exercise = "strength", "bodyweight" | Sort-Object {Get-Random}
-$test = if($exercise[0] -like "strength"){
+$type = if($exercise[0] -like "strength"){
     $strength | Sort-Object{Get-Random}
 } else {
     $bodyweight | Sort-Object {Get-Random}
 }
 
-#Meal-Planner
-function Meal-Planner {
-    $meals = @(
-        "Pasta with Tomato Sauce", 
-        "Chicken and Salad", 
-        "Curry", 
-        "Stir Fry", 
-        "Steak", 
-        "Chicken Steak, Mash and Veg", 
-        "Chicken fried rice"
-    )
-
-    # $snacks = @(
-    #     "Carrot Sticks with paprika tomato paste", 
-    #     "Sandwich", 
-    #     "Fruit", 
-    #     "Egg fried rice"
-    # )
-
-    $randomMeals = $meals | Sort-Object {Get-Random}
-    $first = $randomMeals[0]
-    $second = $randomMeals[1]
-    $lunch = "Lunch: $first"
-    $dinner = "Dinner: $second"
+$exercises = foreach($exercise in $type){
+    "<li>$exercise</li>"
 }
+
+#Meal-Planner
+# function Meal-Planner {
+#     $meals = @(
+#         "Pasta with Tomato Sauce", 
+#         "Chicken and Salad", 
+#         "Curry", 
+#         "Stir Fry", 
+#         "Steak", 
+#         "Chicken Steak, Mash and Veg", 
+#         "Chicken fried rice"
+#     )
+
+#     # $snacks = @(
+#     #     "Carrot Sticks with paprika tomato paste", 
+#     #     "Sandwich", 
+#     #     "Fruit", 
+#     #     "Egg fried rice"
+#     # )
+
+#     $randomMeals = $meals | Sort-Object {Get-Random}
+#     $first = $randomMeals[0]
+#     $second = $randomMeals[1]
+#     $lunch = "Lunch: $first"
+#     $dinner = "Dinner: $second"
+# }
 
 # Send email with randomised exercises on it
 
@@ -73,7 +77,7 @@ function Send-email {
     $body = @"
     <h1>Todays Workout</h1>
     <ul>
-        <li>$test</li>
+        $exercises
     </ul>
 "@
     $email = @{
