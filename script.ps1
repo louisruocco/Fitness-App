@@ -30,69 +30,76 @@ $bodyweight = @(
     "Leg Raises"    
 )
 
-# randomise 4-5 exercises + supersets
-$exercise = "strength", "bodyweight" | Sort-Object {Get-Random}
-$type = if($exercise[0] -like "strength"){
-    $strength | Sort-Object{Get-Random}
-} else {
-    $bodyweight | Sort-Object {Get-Random}
-}
-
-$exercises = foreach($exercise in $type){
-    "<li>$exercise</li>"
-}
-
 #Meal-Planner
-# function Meal-Planner {
-#     $meals = @(
-#         "Pasta with Tomato Sauce", 
-#         "Chicken and Salad", 
-#         "Curry", 
-#         "Stir Fry", 
-#         "Steak", 
-#         "Chicken Steak, Mash and Veg", 
-#         "Chicken fried rice"
-#     )
+function MealPlanner {
+    param (
+        [string]$lunch,
+        [string]$dinner
+    )
 
-#     # $snacks = @(
-#     #     "Carrot Sticks with paprika tomato paste", 
-#     #     "Sandwich", 
-#     #     "Fruit", 
-#     #     "Egg fried rice"
-#     # )
+    $meals = @(
+        "Pasta with Tomato Sauce", 
+        "Chicken and Salad", 
+        "Curry", 
+        "Stir Fry", 
+        "Steak", 
+        "Chicken Steak, Mash and Veg", 
+        "Chicken fried rice"
+    )
 
-#     $randomMeals = $meals | Sort-Object {Get-Random}
-#     $first = $randomMeals[0]
-#     $second = $randomMeals[1]
-#     $lunch = "Lunch: $first"
-#     $dinner = "Dinner: $second"
-# }
+    # $snacks = @(
+    #     "Carrot Sticks with paprika tomato paste", 
+    #     "Sandwich", 
+    #     "Fruit", 
+    #     "Egg fried rice"
+    # )
+
+    $randomMeals = $meals | Sort-Object {Get-Random}
+    $lunch = $randomMeals[0]
+    $dinner = $randomMeals[1]
+}
 
 # Send email with randomised exercises on it
 
-function Send-email {
-    $username = (Get-Content ".\creds.txt")[0]
-    $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
+# function Send-email {
+#     param (
+#         [string]$first
+#     )
+#     $username = (Get-Content ".\creds.txt")[0]
+#     $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
 
-    $body = @"
-    <h1>Todays Workout</h1>
-    <ul>
-        $exercises
-    </ul>
-"@
-    $email = @{
-        from = $username
-        to = $username
-        subject = "Workout"
-        smtpserver = "smtp.gmail.com"
-        body = $body
-        port = 587
-        credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
-        usessl = $true
-        verbose = $true
-    }
+#     $category = "strength", "bodyweight" | Sort-Object {Get-Random}
+#     $type = if($category[0] -like "strength"){
+#         $strength | Sort-Object{Get-Random}
+#     } else {
+#         $bodyweight | Sort-Object {Get-Random}
+#     }
+
+#     $exercises = foreach($exercise in $type){
+#         "<li>$exercise</li>"
+#     }
+
+#     $body = @"
+#     <h1>Todays Workout</h1>
+#     <ul>
+#         $exercises
+#     </ul>
+#     <h1>Today's Meal Plan</h1>
+#     <h3>Lunch: $mealPlanLunch
+# "@
+#     $email = @{
+#         from = $username
+#         to = $username
+#         subject = "Workout"
+#         smtpserver = "smtp.gmail.com"
+#         body = $body
+#         port = 587
+#         credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
+#         usessl = $true
+#         verbose = $true
+#     }
     
-    Send-MailMessage @email -BodyAsHtml
-}
+#     Send-MailMessage @email -BodyAsHtml
+# }
 
-Send-Email
+# Send-Email
