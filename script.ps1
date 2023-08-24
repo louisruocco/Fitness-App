@@ -38,6 +38,32 @@ $test = if($exercise[0] -like "strength"){
     $bodyweight | Sort-Object {Get-Random}
 }
 
+#Meal-Planner
+function Meal-Planner {
+    $meals = @(
+        "Pasta with Tomato Sauce", 
+        "Chicken and Salad", 
+        "Curry", 
+        "Stir Fry", 
+        "Steak", 
+        "Chicken Steak, Mash and Veg", 
+        "Chicken fried rice"
+    )
+
+    # $snacks = @(
+    #     "Carrot Sticks with paprika tomato paste", 
+    #     "Sandwich", 
+    #     "Fruit", 
+    #     "Egg fried rice"
+    # )
+
+    $randomMeals = $meals | Sort-Object {Get-Random}
+    $first = $randomMeals[0]
+    $second = $randomMeals[1]
+    $lunch = "Lunch: $first"
+    $dinner = "Dinner: $second"
+}
+
 # Send email with randomised exercises on it
 
 function Send-email {
@@ -54,15 +80,15 @@ function Send-email {
         from = $username
         to = $username
         subject = "Workout"
-        body = $body
         smtpserver = "smtp.gmail.com"
+        body = $body
         port = 587
         credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
         usessl = $true
         verbose = $true
     }
     
-    Send-MailMessage @email
+    Send-MailMessage @email -BodyAsHtml
 }
 
 Send-Email
