@@ -30,76 +30,64 @@ $bodyweight = @(
     "Leg Raises"    
 )
 
-#Meal-Planner
-function MealPlanner {
+$meals = @(
+    "Pasta with Tomato Sauce", 
+    "Chicken and Salad", 
+    "Curry", 
+    "Stir Fry", 
+    "Steak", 
+    "Chicken Steak, Mash and Veg", 
+    "Chicken fried rice"
+)
+
+# $snacks = @(
+#     "Carrot Sticks with paprika tomato paste", 
+#     "Sandwich", 
+#     "Fruit", 
+#     "Egg fried rice"
+# )
+
+Send email with randomised exercises on it
+
+function Send-email {
     param (
-        [string]$lunch,
-        [string]$dinner
+        [string]$first
     )
+    $username = (Get-Content ".\creds.txt")[0]
+    $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
 
-    $meals = @(
-        "Pasta with Tomato Sauce", 
-        "Chicken and Salad", 
-        "Curry", 
-        "Stir Fry", 
-        "Steak", 
-        "Chicken Steak, Mash and Veg", 
-        "Chicken fried rice"
-    )
+    $category = "strength", "bodyweight" | Sort-Object {Get-Random}
+    $type = if($category[0] -like "strength"){
+        $strength | Sort-Object{Get-Random}
+    } else {
+        $bodyweight | Sort-Object {Get-Random}
+    }
 
-    # $snacks = @(
-    #     "Carrot Sticks with paprika tomato paste", 
-    #     "Sandwich", 
-    #     "Fruit", 
-    #     "Egg fried rice"
-    # )
+    $exercises = foreach($exercise in $type){
+        "<li>$exercise</li>"
+    }
 
-    $randomMeals = $meals | Sort-Object {Get-Random}
-    $lunch = $randomMeals[0]
-    $dinner = $randomMeals[1]
+    $body = @"
+    <h1>Todays Workout</h1>
+    <ul>
+        $exercises
+    </ul>
+    <h1>Today's Meal Plan</h1>
+    <h3>Lunch: $lunch
+"@
+    $email = @{
+        from = $username
+        to = $username
+        subject = "Workout"
+        smtpserver = "smtp.gmail.com"
+        body = $body
+        port = 587
+        credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
+        usessl = $true
+        verbose = $true
+    }
+    
+    Send-MailMessage @email -BodyAsHtml
 }
 
-# Send email with randomised exercises on it
-
-# function Send-email {
-#     param (
-#         [string]$first
-#     )
-#     $username = (Get-Content ".\creds.txt")[0]
-#     $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
-
-#     $category = "strength", "bodyweight" | Sort-Object {Get-Random}
-#     $type = if($category[0] -like "strength"){
-#         $strength | Sort-Object{Get-Random}
-#     } else {
-#         $bodyweight | Sort-Object {Get-Random}
-#     }
-
-#     $exercises = foreach($exercise in $type){
-#         "<li>$exercise</li>"
-#     }
-
-#     $body = @"
-#     <h1>Todays Workout</h1>
-#     <ul>
-#         $exercises
-#     </ul>
-#     <h1>Today's Meal Plan</h1>
-#     <h3>Lunch: $mealPlanLunch
-# "@
-#     $email = @{
-#         from = $username
-#         to = $username
-#         subject = "Workout"
-#         smtpserver = "smtp.gmail.com"
-#         body = $body
-#         port = 587
-#         credential = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $password
-#         usessl = $true
-#         verbose = $true
-#     }
-    
-#     Send-MailMessage @email -BodyAsHtml
-# }
-
-# Send-Email
+Send-Email
