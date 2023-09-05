@@ -30,50 +30,43 @@ $bodyweight = @(
     "Leg Raises"    
 )
 
-#Meal-Planner
-function MealPlanner {
+$meals = @(
+    "Pasta with Tomato Sauce", 
+    "Chicken and Salad", 
+    "Curry", 
+    "Stir Fry", 
+    "Steak", 
+    "Chicken Steak, Mash and Veg", 
+    "Chicken fried rice"
+)
+
+
+function Randomise {
     param (
-        [string]$lunch,
-        [string]$dinner
+        [string]$type
     )
 
-    $meals = @(
-        "Pasta with Tomato Sauce", 
-        "Chicken and Salad", 
-        "Curry", 
-        "Stir Fry", 
-        "Steak", 
-        "Chicken Steak, Mash and Veg", 
-        "Chicken fried rice"
-    )
+    $result = $type | Sort-Object {Get-Random}
 
-    # $snacks = @(
-    #     "Carrot Sticks with paprika tomato paste", 
-    #     "Sandwich", 
-    #     "Fruit", 
-    #     "Egg fried rice"
-    # )
-
-    $randomMeals = $meals | Sort-Object {Get-Random}
-    $lunch = $randomMeals[0]
-    $dinner = $randomMeals[1]
+    return $result
 }
-
 # Send email with randomised exercises on it
 
-# function Send-email {
-#     param (
-#         [string]$first
-#     )
-#     $username = (Get-Content ".\creds.txt")[0]
-#     $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
+function Send-email {
+    param (
+        [string]$first
+    )
+    # $username = (Get-Content ".\creds.txt")[0]
+    # $password = (Get-Content ".\creds.txt")[1] | ConvertTo-SecureString -AsPlainText -Force
 
-#     $category = "strength", "bodyweight" | Sort-Object {Get-Random}
-#     $type = if($category[0] -like "strength"){
-#         $strength | Sort-Object{Get-Random}
-#     } else {
-#         $bodyweight | Sort-Object {Get-Random}
-#     }
+    $category = "strength", "bodyweight" | Sort-Object {Get-Random}
+    $type = if($category[0] -like "strength"){
+        Randomise -type $strength[0..5]
+    } else {
+        Randomise -type $bodyweight[0..2]
+    }
+
+    write-host $type
 
 #     $exercises = foreach($exercise in $type){
 #         "<li>$exercise</li>"
@@ -100,6 +93,6 @@ function MealPlanner {
 #     }
     
 #     Send-MailMessage @email -BodyAsHtml
-# }
+}
 
-# Send-Email
+Send-Email
